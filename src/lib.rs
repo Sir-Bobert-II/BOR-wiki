@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{sync::Arc};
 
 use serenity::{builder::CreateApplicationCommand, model::prelude::command::CommandOptionType};
 use truncrate::*;
@@ -19,7 +19,7 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
 }
 
 pub async fn run(title: String, max: usize) -> String {
-    let page = Rc::new(match Page::search(&title).await {
+    let page = Arc::new(match Page::search(&title).await {
         Ok(x) => x,
         Err(e) => return e.to_string(),
     });
