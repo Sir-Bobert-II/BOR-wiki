@@ -1,4 +1,4 @@
-use std::{sync::Arc};
+use std::{sync::{Arc, Mutex}};
 
 use serenity::{builder::CreateApplicationCommand, model::prelude::command::CommandOptionType};
 use truncrate::*;
@@ -19,12 +19,12 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
 }
 
 pub async fn run(title: String, max: usize) -> String {
-    let page = Arc::new(match Page::search(&title).await {
+    let page = Mutex::new(match Page::search(&title).await {
         Ok(x) => x,
         Err(e) => return e.to_string(),
     });
-    let url = page.get_url();
-    let mut content = match page.get_summary().await {
+    let url = page.lock().unwrap().get_url();
+    let mut content = match page.lock().unwrap().get_summary().await{
         Ok(x) => x,
         Err(e) => return e.to_string(),
     };
