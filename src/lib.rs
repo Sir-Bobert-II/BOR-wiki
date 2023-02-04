@@ -21,7 +21,8 @@ pub async fn run(title: String, max: usize) -> String {
         Ok(x) => x,
         Err(e) => return e.to_string(),
     };
-    let mut content = match page.clone().get_summary().await {
+    let url = page.get_url();
+    let mut content = match page.get_summary().await {
         Ok(x) => x,
         Err(e) => return e.to_string(),
     };
@@ -29,5 +30,5 @@ pub async fn run(title: String, max: usize) -> String {
         content = format!("{}...", content.truncate_to_boundary(max));
     }
 
-    format!("{}\n{}", content, page.get_url())
+    format!("{content}\n{url}")
 }
