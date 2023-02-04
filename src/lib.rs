@@ -1,6 +1,7 @@
 use serenity::{builder::CreateApplicationCommand, model::prelude::command::CommandOptionType};
 use truncrate::*;
 use wikipedia_api::*;
+use std::rc::Rc;
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
     command
@@ -16,13 +17,13 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
         })
 }
 
-pub async fn run(title: String, max: usize) -> String {
-    let page = match Page::search(&title).await {
+pub fn run(title: String, max: usize) -> String {
+    let page = match Page::search(&title) {
         Ok(x) => x,
         Err(e) => return e.to_string(),
     };
-    let url = page.url.clone().to_string();
-    let summary = page.get_summary().await;
+    let url = Rc::clone(&page.url);
+    let summary = page.get_summary();
     let mut content = match summary {
         Ok(x) => x,
         Err(e) => return e.to_string(),
@@ -31,5 +32,5 @@ pub async fn run(title: String, max: usize) -> String {
         content = format!("{}...", content.truncate_to_boundary(max));
     }
 
-    format!("{content}\n{}", url)
+    format!("{content}\n{url}")
 }
