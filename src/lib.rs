@@ -21,7 +21,7 @@ pub async fn run(title: String, max: usize) -> String {
         Ok(x) => x,
         Err(e) => return e.to_string(),
     };
-    let mut content = match page.to_owned().get_summary().await {
+    let mut content = match page.clone().get_summary().await {
         Ok(x) => x,
         Err(e) => return e.to_string(),
     };
